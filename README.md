@@ -17,8 +17,9 @@ class Products
 For each product you will be required to track:
  
   - the total units sold
+  - the total units purchased and pending
+  - the total units purchased and received
   - the current stock levels 
-  - the number of units to purchase to top up the stock
 
 Initially each product will start with a stock level of 20 units.
 Every day for one week you will receive a list of orders with quantities to order for each product.
@@ -49,15 +50,26 @@ It is in the following format:
 ]
 ```
 
-At the end of each days orders, if stock level for any product fall below 10, a purchase order will need to be created to replenish the low stock items. 
-For each low stock item top up the supply back to 20 units for the next days supply. So if there are 3 croissants at the end of one day, the purchase order should be for 17 units. 
+At the end of each days orders, if stock level for any product falls below 10, a purchase order will need to be created to replenish the low stock items.
+For each low stock item you will need to purchase 20 units, though those 20 units will not be received and added to the store inventory until the start of the second days trade from when the purchase order was placed.
+
+For example if the stock for Lamingtons at the end of Monday is 8 units, a purchase order for 20 units is made that night, which would be expected to be received by start of trading for Wednesday.
+On Tuesday 5 lamingtons are sold bringing the inventory down to 3 units. Lamingtons should not be added to a purchase order for that night as a pending purchase order is due the next morning.
+A purchase order is then received for 20 lamingtons before start of trading on Wednesday, topping inventory up to 23 units.
+
+So one trading day would include the following events:
+
+ - Receive stock for any pending purchase orders made 2 days prior
+ - Process all orders for that day
+ - Place purchase order for all products low in stock (excluding items in a pending purchase order)
 
 After 7 days of trading the program needs to output a nice summary for each product:
 
  - The total units sold
- - The total units purchased
+ - The total units purchased and pending
+ - The total units purchased and received
  - The current stock level
- 
+  
 ## Provided Interfaces
 
 For your solution there are four Php interfaces you must implement
