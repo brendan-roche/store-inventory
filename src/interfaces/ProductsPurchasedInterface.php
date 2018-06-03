@@ -1,5 +1,7 @@
 <?php
 
+namespace Inventory\Interfaces;
+
 interface ProductsPurchasedInterface
 {
     /**

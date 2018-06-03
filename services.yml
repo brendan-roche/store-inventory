@@ -1,0 +1,27 @@
+services:
+  event_dispatcher:
+    class: Symfony\Component\EventDispatcher\EventDispatcher
+    shared: true
+
+  order_processor:
+    class: Inventory\OrderProcessor
+    arguments: ['@event_dispatcher', '@inventory', '@purchase_order_manager']
+    shared: true
+
+  inventory:
+    class: Inventory\Inventory
+    shared: true
+
+  purchase_order_manager:
+    class: Inventory\PurchaseOrderManager
+    arguments: ['@event_dispatcher', '@inventory']
+    shared: true
+
+  inventory_changes_listener:
+    class: Inventory\InventoryChangesListener
+    arguments: ['@inventory']
+
+  inventory_reporter:
+    class: Inventory\InventoryReporter
+    arguments: ['@inventory']
+    shared: true
