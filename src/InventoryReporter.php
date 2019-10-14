@@ -2,6 +2,7 @@
 
 namespace Inventory;
 
+use Exception;
 use Inventory\Events\OrderCreatedEvent;
 use Inventory\Events\PurchaseOrderCreatedEvent;
 use Inventory\Events\PurchaseOrderReceivedEvent;
@@ -30,19 +31,28 @@ class InventoryReporter implements ProductsSoldInterface, ProductsPurchasedInter
      */
     private $pending = [];
 
-    public function __construct(Inventory $inventory)
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    public function __construct(Inventory $inventory, Logger $logger)
     {
         $this->inventory = $inventory;
+        $this->logger = $logger;
     }
 
     /**
      * @param OrderCreatedEvent $event
+     * @throws Exception
      */
     public function onOrderCreated(OrderCreatedEvent $event)
     {
         $order = $event->getOrder();
         foreach ($order->getOrderData() as $productId => $quantity) {
             $this->sold[$productId] = ($this->sold[$productId] ?? 0) + $quantity;
+            $newInventory = $this->inventory->decrement($productId, $quantity);
+            $this->logger->info("Sold $quantity x " . Products::getProductInfo($productId) . ", new stock level: " . $newInventory);
         }
     }
 
@@ -53,13 +63,16 @@ class InventoryReporter implements ProductsSoldInterface, ProductsPurchasedInter
     public function onPurchaseOrderCreated(PurchaseOrderCreatedEvent $event)
     {
         $purchaseOrder = $event->getPurchaseOrder();
-        foreach ($purchaseOrder->getProductQuantities() as $productId => $quantity) {
+        $productQuantities = $purchaseOrder->getProductQuantities();
+        $this->logger->info('Created PO for the following low stock items: ' . implode(', ', array_keys($productQuantities)));
+        foreach ($productQuantities as $productId => $quantity) {
             $this->pending[$productId] = ($this->pending[$productId] ?? 0) + $quantity;
         }
     }
 
     /**
      * @param PurchaseOrderReceivedEvent $event
+     * @throws Exception
      */
     public function onPurchaseOrderReceived(PurchaseOrderReceivedEvent $event)
     {
@@ -67,6 +80,8 @@ class InventoryReporter implements ProductsSoldInterface, ProductsPurchasedInter
         foreach ($purchaseOrder->getProductQuantities() as $productId => $quantity) {
             $this->pending[$productId] -= $quantity;
             $this->received[$productId] = ($this->received[$productId] ?? 0) + $quantity;
+            $this->inventory->increment($productId, $quantity);
+            $this->logger->info("Received $quantity x " . Products::getProductInfo($productId) . ", new stock level: " . $this->inventory->getStockLevel($productId));
         }
     }
 

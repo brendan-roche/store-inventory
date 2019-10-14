@@ -19,19 +19,23 @@ class Inventory implements InventoryInterface
     /**
      * @param int $productId
      * @param int $quantity positive quantity
+     * @return int
      */
-    public function increment(int $productId, int $quantity)
+    public function increment(int $productId, int $quantity): int
     {
         $this->inventory[$productId] += $quantity;
+        return $this->inventory[$productId];
     }
 
     /**
      * @param int $productId
      * @param int $quantity positive quantity
+     * @return int
      */
-    public function decrement(int $productId, int $quantity)
+    public function decrement(int $productId, int $quantity): int
     {
         $this->inventory[$productId] -= $quantity;
+        return $this->inventory[$productId];
     }
 
     /**

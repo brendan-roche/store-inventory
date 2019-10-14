@@ -6,7 +6,9 @@
         "symfony/config": "^4.1",
         "symfony/dependency-injection": "^4.1",
         "symfony/event-dispatcher": "^4.1",
-        "symfony/yaml": "^4.1"
+        "symfony/yaml": "^4.1",
+        "psr/log": "^1.1",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {"Inventory\\": "src/"}

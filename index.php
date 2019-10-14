@@ -3,7 +3,6 @@
 use Inventory\Events\OrderCreatedEvent;
 use Inventory\Events\PurchaseOrderCreatedEvent;
 use Inventory\Events\PurchaseOrderReceivedEvent;
-use Inventory\InventoryChangesListener;
 use Inventory\InventoryReporter;
 use Inventory\OrderProcessor;
 use Symfony\Component\Config\FileLocator;
@@ -23,12 +22,6 @@ $loader->load('services.yml');
 
 $dispatcher = $containerBuilder->get('event_dispatcher');;
 assert($dispatcher instanceof EventDispatcher);
-
-$changesListener = $containerBuilder->get('inventory_changes_listener');
-assert($changesListener instanceof InventoryChangesListener);
-
-$dispatcher->addListener(OrderCreatedEvent::NAME, [$changesListener, 'onOrderCreated']);
-$dispatcher->addListener(PurchaseOrderReceivedEvent::NAME, [$changesListener, 'onPurchaseOrderReceived']);
 
 $inventoryReporter = $containerBuilder->get('inventory_reporter');
 assert($inventoryReporter instanceof InventoryReporter);

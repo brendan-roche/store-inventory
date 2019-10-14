@@ -2,6 +2,8 @@
 
 namespace Inventory;
 
+use Exception;
+
 class Products
 {
     public const BROWNIE = 1;
@@ -10,7 +12,10 @@ class Products
     public const CROISSANT = 4;
     public const CHOCOLATE_CAKE = 5;
 
-    public static function getProductNames()
+    /**
+     * @return string[]
+     */
+    public static function getProductNames(): array
     {
         return [
             self::BROWNIE          => 'Brownie',
@@ -19,5 +24,30 @@ class Products
             self::CROISSANT        => 'Croissant',
             self::CHOCOLATE_CAKE   => 'Chocolate Cake',
         ];
+    }
+
+    /**
+     * @param int $id
+     * @return string
+     * @throws Exception
+     */
+    public static function getProductName(int $id): string
+    {
+        $productNames = self::getProductNames();
+        if (!array_key_exists($id, $productNames)) {
+            throw new Exception("Product with id $id does not exist");
+        }
+
+        return $productNames[$id];
+    }
+
+    /**
+     * @param int $id
+     * @return string
+     * @throws Exception
+     */
+    public static function getProductInfo(int $id): string
+    {
+        return "($id) " .  self::getProductName($id);
     }
 }

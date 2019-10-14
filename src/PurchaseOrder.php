@@ -10,7 +10,6 @@ class PurchaseOrder
     private $productQuantities = [];
 
     /**
-     * @param int $receiveDay
      * @param array $productQuantities
      */
     public function __construct(array $productQuantities)

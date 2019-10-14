@@ -5,7 +5,7 @@ services:
 
   order_processor:
     class: Inventory\OrderProcessor
-    arguments: ['@event_dispatcher', '@inventory', '@purchase_order_manager']
+    arguments: ['@event_dispatcher', '@inventory', '@purchase_order_manager', '@logger']
     shared: true
 
   inventory:
@@ -14,14 +14,14 @@ services:
 
   purchase_order_manager:
     class: Inventory\PurchaseOrderManager
-    arguments: ['@event_dispatcher', '@inventory']
+    arguments: ['@event_dispatcher', '@inventory', '@logger']
     shared: true
-
-  inventory_changes_listener:
-    class: Inventory\InventoryChangesListener
-    arguments: ['@inventory']
 
   inventory_reporter:
     class: Inventory\InventoryReporter
-    arguments: ['@inventory']
+    arguments: ['@inventory', '@logger']
     shared: true
+
+  logger:
+      class: Inventory\Logger
+      shared: true
