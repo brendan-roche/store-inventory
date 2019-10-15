@@ -114,12 +114,24 @@ class InventoryReporter implements ProductsSoldInterface, ProductsPurchasedInter
 
     public function displaySummary()
     {
+        echo "Weekly Summary
+
++----------------------------------------------------------+
+| Product              | Sold | Received | Pending | Stock |
+| -------------------- | ---- | -------- | ------- | ----- |
+";
+
         foreach (Products::getProductNames() as $productId => $name) {
-            echo "($productId) $name Totals\n";
-            echo 'Sold: ' . ($this->sold[$productId] ?? 0) . "\n";
-            echo 'Received Purchases: ' . ($this->received[$productId] ?? 0) . "\n";
-            echo 'Pending Purchases: ' . ($this->pending[$productId] ?? 0) . "\n";
-            echo 'Stock Level: ' . $this->inventory->getStockLevel($productId) . "\n\n";
+            echo sprintf(
+                "| (%s) %-16s | %4s | %8s | %7s | %5s |\n",
+                $productId,
+                $name,
+                $this->sold[$productId] ?? 0,
+                $this->received[$productId] ?? 0,
+                $this->pending[$productId] ?? 0,
+                $this->inventory->getStockLevel($productId)
+            );
         }
+        echo "+----------------------------------------------------------+\n\n";
     }
 }
